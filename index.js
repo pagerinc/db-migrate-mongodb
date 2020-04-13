@@ -306,12 +306,7 @@ var MongodbDriver = Base.extend({
             prCB(err);
           }
 
-          // with close(force: true), get db destroyed error
-          // with close(force: false), times out for .collecions
-          // without close, hangs
-          // mongoClient.close(true, function() {
           prCB(null, data);
-          // });
         };
 
         // Depending on the command, we need to use different mongo methods

@@ -163,7 +163,7 @@ describe('db-migrate', () => {
                     ],
                     (err) => {
                         if (err) {
-                            return rejet(err);
+                            return reject(err);
                         }
 
                         db._find('event', { title: 'title' }, (err, data) => {
