@@ -1,0 +1,23 @@
+volumes:
+  mongocfg: {}
+  mongodb: {}
+
+services:
+  mongo:
+    image: mongo:7.0
+    restart: unless-stopped
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    volumes:
+      - "mongocfg:/data/configdb"
+      - "mongodb:/data/db"
+
+
+## NOTE: this is a requirement for cloud builds
+## If docker-compose is not working for you, simply run
+## 'docker network create cloudbuild'
+##
+networks:
+  default:
+    name: cloudbuild
+    external: true
