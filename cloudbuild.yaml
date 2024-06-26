@@ -30,7 +30,6 @@ steps:
     args: ["test"]
     env:
       - "NODE_ENV=test"
-      - "MONGO_URL=mongodb://admin:admin@mongo:27017"
 
   - id: npm-publish
     name: "us-east1-docker.pkg.dev/$PROJECT_ID/cloudbuilders/node-buildtime:20.9-latest"
