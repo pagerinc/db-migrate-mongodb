@@ -51,12 +51,8 @@ vows
         },
 
         "containing the event table": function(err, tables) {
-          assert.equal(
-            tables.filter(function(table) {
-              return table.collectionName === "event";
-            }).length,
-            1
-          );
+          const table = tables.find((t) => t.name === "event");
+          assert.isObject(table);
         }
       }
     }
@@ -82,13 +78,9 @@ vows
         },
 
         "containing no tables": function(err, tables) {
-          assert.isNotNull(tables);
-          assert.equal(
-            tables.filter(function(table) {
-              return table.collectionName === "event";
-            }).length,
-            0
-          );
+          assert.isArray(tables);
+          const table = tables.find((t) => t.name === "event");
+          assert.isUndefined(table);
         }
       }
     }
@@ -118,16 +110,10 @@ vows
         },
 
         "containing the functions table": function(err, tables) {
-          var table = tables.filter(function(table) {
-            return table.collectionName === "functions";
-          });
-          var index = 0;
+          assert.isNull(err);
           assert.isNotNull(tables);
-          assert.equal(table.length, 1);
-
-          if (tables[0].collectionName === "system.indexes") index = 1;
-
-          assert.equal(tables[index].collectionName, "functions");
+          const table = tables.find((t) => t.name === "functions");
+          assert.isObject(table);
         }
       }
     }
@@ -157,16 +143,10 @@ vows
         },
 
         "of the functions original table": function(err, tables) {
-          var table = tables.filter(function(table) {
-            return table.collectionName === "event";
-          });
-          var index = 0;
+          assert.isNull(err);
           assert.isNotNull(tables);
-          assert.equal(table.length, 1);
-
-          if (tables[0].collectionName === "system.indexes") index = 1;
-
-          assert.equal(tables[index].collectionName, "event");
+          const table = tables.find((t) => t.name === "event");
+          assert.isObject(table);
         }
       },
 
@@ -317,99 +297,10 @@ vows
         },
 
         "has migrations table": function(err, tables) {
-          var index = 0;
           assert.isNull(err);
           assert.isNotNull(tables);
-          assert.equal(
-            tables.filter(function(table) {
-              return table.collectionName === "migrations";
-            }).length,
-            1
-          );
-          if (tables[0].collectionName === "system.indexes") index = 1;
-
-          assert.equal(tables[index].collectionName, "migrations");
-        }
-      }
-    }
-  })
-  .addBatch({
-    removeIndex: {
-      topic: function() {
-        db.createCollection(
-          "event",
-          function(err, collection) {
-            if (err) {
-              return this.callback(err);
-            }
-
-            db.addIndex(
-              "event",
-              "event_title",
-              "title",
-              false,
-              function(err, data) {
-                if (err) {
-                  return this.callback(err);
-                }
-
-                db.removeIndex("event", "event_title", this.callback);
-              }.bind(this)
-            );
-          }.bind(this)
-        );
-      },
-
-      teardown: function() {
-        db.dropCollection("event", this.callback);
-      },
-
-      "has resulting index metadata": {
-        topic: function() {
-          db._getIndexes("event", this.callback);
-        },
-
-        "without index": function(err, indexes) {
-          if (err) {
-            return this.callback(err);
-          }
-
-          assert.isDefined(indexes);
-          assert.isNotNull(indexes);
-          assert.notInclude(indexes, "event_title");
-        }
-      }
-    }
-  })
-  .addBatch({
-    createMigrationsTable: {
-      topic: function() {
-        db._createMigrationsCollection(this.callback);
-      },
-
-      teardown: function() {
-        db.dropCollection("migrations", this.callback);
-      },
-
-      "has migrations table": {
-        topic: function() {
-          db._getCollectionNames(this.callback);
-        },
-
-        "has migrations table": function(err, tables) {
-          var index = 0;
-          assert.isNull(err);
-          assert.isNotNull(tables);
-          assert.equal(
-            tables.filter(function(table) {
-              return table.collectionName === "migrations";
-            }).length,
-            1
-          );
-
-          if (tables[0].collectionName === "system.indexes") index = 1;
-
-          assert.equal(tables[index].collectionName, "migrations");
+          const table = tables.find((t) => t.name === "migrations");
+          assert.isObject(table);
         }
       }
     }

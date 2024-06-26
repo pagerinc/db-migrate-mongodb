@@ -1,8 +1,7 @@
-var util = require('util');
-var MongoClient = require('mongodb').MongoClient;
-var Server = require('mongodb').Server;
-var Base = require('db-migrate-base');
-var Promise = require('bluebird');
+const util = require('util');
+const { MongoClient } = require('mongodb');
+const Base = require('db-migrate-base');
+const Promise = require('bluebird');
 var log;
 var type;
 
@@ -212,7 +211,7 @@ var MongodbDriver = Base.extend({
     return this._run('insert', this.internals.seedTable, {name: name, run_on: new Date()})
       .nodeify(callback);
   },
-  
+
   /**
    * Returns the DB instance so custom updates can be made.
    * NOTE: This method exceptionally does not call close() on the database driver when the promise resolves. So the getDbInstance method caller
@@ -285,82 +284,75 @@ var MongodbDriver = Base.extend({
     }
 
     return new Promise(function(resolve, reject) {
-      var prCB = function(err, data) {
-        return (err ? reject(err) : resolve(data));
-      };
-
-      // Get a connection to mongo
-      this.connection.connect(this.connectionString, function(err, db) {
-
-        if(err) {
-          prCB(err);
-        }
-
-        // Callback function to return mongo records
-        var callbackFunction = function(err, data) {
-
-          if(err) {
-            prCB(err);
-          }
-
-          prCB(null, data);
-          db.close();
-        };
+      this.connection.connect(this.connectionString).then(async (client) => {
+        const db = this.connection.db();
 
         // Depending on the command, we need to use different mongo methods
         switch(command) {
-          case 'find':
+          case 'createCollection':
+            // Previously this function could create a collection regardless if it existed or not
+            const collections = await db.listCollections({}, { nameOnly: true }).toArray();
+            const collectionExists = collections.some(c => c.name === collection);
 
+            if (!collectionExists) {
+              await db.createCollection(collection);
+            }
+            resolve(true);
+            break;
+          case 'find':
             if(sort) {
-              db.collection(collection)[command](options.query).sort(sort).toArray(callbackFunction);
+              db.collection(collection).find(options.query).sort(sort).toArray().then(resolve, reject);
             }
             else {
-              db.collection(collection)[command](options).toArray(callbackFunction);
+              db.collection(collection).find(options).toArray().then(resolve, reject);
             }
             break;
           case 'renameCollection':
-            db[command](collection, options.newCollection, callbackFunction);
+            db[command](collection, options.newCollection).then(resolve, reject);
             break;
           case 'createIndex':
-            db[command](collection, options.columns, {name: options.indexName, unique: options.unique}, callbackFunction);
+            db[command](collection, options.columns, {name: options.indexName, unique: options.unique}).then(resolve, reject);
             break;
           case 'dropIndex':
-            db.collection(collection)[command](options.indexName, callbackFunction);
+            db.collection(collection)[command](options.indexName).then(resolve, reject);
             break;
           case 'insert':
             // options is the records to insert in this case
-            if(util.isArray(options))
-              db.collection(collection).insertMany(options, {}, callbackFunction);
-            else
-              db.collection(collection).insertOne(options, {}, callbackFunction);
+            if(util.isArray(options)) {
+              db.collection(collection).insertMany(options, {}).then(resolve, reject);
+            }
+            else {
+              db.collection(collection).insertOne(options, {}).then(resolve, reject);
+            }
             break;
           case 'remove':
             // options is the records to insert in this case
             if(util.isArray(options))
-              db.collection(collection).deleteMany(options, callbackFunction);
+              db.collection(collection).deleteMany(options).then(resolve, reject);
             else
-              db.collection(collection).deleteOne(options, callbackFunction);
+              db.collection(collection).deleteOne(options).then(resolve, reject);
             break;
           case 'collections':
-            db.collections(callbackFunction);
+            db.listCollections().toArray().then(resolve, reject);
             break;
           case 'indexInformation':
-            db.indexInformation(collection, callbackFunction);
+            db.indexInformation(collection).then(resolve, reject);
             break;
           case 'dropDatabase':
-            db.dropDatabase(callbackFunction);
+            db.dropDatabase().then(resolve, reject);
             break;
           case 'update':
-            db.collection(collection)[command](options.query, options.update, options.options, callbackFunction);
+            db.collection(collection)[command](options.query, options.update, options.options).then(resolve, reject);
             break;
           case 'updateMany':
-            db.collection(collection)[command](options.query, options.update, options.options, callbackFunction);
+            db.collection(collection)[command](options.query, options.update, options.options).then(resolve, reject);
             break;
           case 'getDbInstance':
-            prCB(null, db); // When the user wants to get the DB instance we need to return the promise callback, so the DB connection is not automatically closed
+            resolve(db);
+            // When the user wants to get the DB instance we need to return the promise callback, so the DB connection is not automatically closed
             break;
           default:
-            db[command](collection, callbackFunction);
+            db[command](collection).then(resolve, reject);
             break;
         }
       });
@@ -550,7 +542,6 @@ exports.connect = function(config, intern, callback) {
       mongoString += '?' + extraParams.join('&');
   }
 
-
-  db = config.db || new MongoClient(new Server(host, port));
+  db = config.db || new MongoClient(mongoString);
   callback(null, new MongodbDriver(db, intern, mongoString));
 };

@@ -1,0 +1,54 @@
+steps:
+  - id: node-buildtime-pull
+    name: "us-east1-docker.pkg.dev/$PROJECT_ID/cloudbuilders/node-buildtime:20.9-latest"
+    entrypoint: "true"
+
+  - id: compose
+    name: "us-east1-docker.pkg.dev/$PROJECT_ID/cloudbuilders/node-buildtime:20.9-latest"
+    secretEnv: ["NPM_TOKEN"]
+    entrypoint: "docker-compose"
+    args: ["up", "-d"]
+    waitFor: ["node-buildtime-pull"]
+
+  - id: npm-install
+    name: "us-east1-docker.pkg.dev/$PROJECT_ID/cloudbuilders/node-buildtime:20.9-latest"
+    secretEnv: ["NPM_TOKEN"]
+    entrypoint: npm
+    args: ["i", "--quiet", "--package-lock-only"]
+    waitFor: ["node-buildtime-pull"]
+
+  - id: npm-ci
+    name: "us-east1-docker.pkg.dev/$PROJECT_ID/cloudbuilders/node-buildtime:20.9-latest"
+    secretEnv: ["NPM_TOKEN"]
+    entrypoint: npm
+    args: ["ci", "--quiet"]
+
+  - id: test-unit
+    name: "us-east1-docker.pkg.dev/$PROJECT_ID/cloudbuilders/node-buildtime:20.9-latest"
+    secretEnv: ["NPM_TOKEN"]
+    entrypoint: npm
+    args: ["test"]
+    env:
+      - "NODE_ENV=test"
+
+  - id: npm-publish
+    name: "us-east1-docker.pkg.dev/$PROJECT_ID/cloudbuilders/node-buildtime:20.9-latest"
+    entrypoint: npm-publish.sh
+    secretEnv: ["NPM_TOKEN"]
+    env:
+      - "TAG_NAME=$TAG_NAME"
+      - "_PR_NUMBER=$_PR_NUMBER"
+
+timeout: 600s
+
+logsBucket: "gs://$PROJECT_ID-primary-cloudbuild-logs"
+
+tags:
+  - "backend"
+  - "npm"
+  - "nodejs"
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/145393225073/secrets/npm-token-publish/versions/latest
+      env: "NPM_TOKEN"

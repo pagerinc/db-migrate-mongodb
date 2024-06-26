@@ -15,7 +15,9 @@
   },
   "mongodb": {
     "driver": "mongodb",
-    "host": "localhost",
-    "database": "db_migrate_test"
+    "host": "mongo",
+    "database": "admin",
+    "user": "admin",
+    "password": "admin"
   }
 }
