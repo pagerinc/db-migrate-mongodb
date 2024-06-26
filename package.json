@@ -30,11 +30,16 @@
     "mongodb": "6.6.2"
   },
   "devDependencies": {
+    "@pager/semantic-release-config": "^2.0.0",
     "db-meta": "^0.4.1",
     "db-migrate-shared": "^1.1.2",
+    "semantic-release": "^24.0.0",
     "vows": "0.8.0"
   },
   "overrides": {
     "graceful-fs": "^4.2.11"
+  },
+  "release": {
+    "extends": "@pager/semantic-release-config"
   }
 }
