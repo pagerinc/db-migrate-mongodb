@@ -4,7 +4,7 @@
   "description": "mongodb driver for db-migrate",
   "main": "index.js",
   "scripts": {
-    "test": "node node_modules/.bin/vows"
+    "test": "cp test/db.config.ci test/db.config.json && node node_modules/.bin/vows"
   },
   "repository": {
     "type": "git",

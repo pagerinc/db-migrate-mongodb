@@ -15,6 +15,5 @@ mongodb driver for db-migrate
 ## Running Tests
 ```shell
 docker-compose up -d
-cp test/db.config.ci test/db.config.json
 npm test
 ```
