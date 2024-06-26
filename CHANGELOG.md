@@ -1,3 +1,20 @@
+# [2.0.0](https://github.com/pagerinc/db-migrate-mongodb/compare/v1.5.0...v2.0.0) (2024-06-26)
+
+
+### Bug Fixes
+
+* **FEN-910:** fix package so that it will produce a version ([#5](https://github.com/pagerinc/db-migrate-mongodb/issues/5)) ([e0d87aa](https://github.com/pagerinc/db-migrate-mongodb/commit/e0d87aa13313314964c34d0822117742a8641e98))
+
+
+### Features
+
+* **FEN-910:** upgrade mongodb package ([#3](https://github.com/pagerinc/db-migrate-mongodb/issues/3)) ([4aa3319](https://github.com/pagerinc/db-migrate-mongodb/commit/4aa3319f70c516a8aece7df51cd2a0a925132d1a))
+
+
+### BREAKING CHANGES
+
+* **FEN-910:** mongo package updated
+
 <a name="1.4.0"></a>
 # [1.4.0](https://github.com/db-migrate/mongodb/compare/v1.3.0...v1.4.0) (2018-01-08)
 
@@ -93,6 +110,3 @@
 
 <a name="1.0.1"></a>
 ## 1.0.1 (2015-09-08)
-
-
-
