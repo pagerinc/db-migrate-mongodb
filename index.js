@@ -308,7 +308,6 @@ var MongodbDriver = Base.extend({
             }
             break;
           case 'renameCollection':
-            console.log('meeeep', await db[command](collection, options.newCollection));
             db[command](collection, options.newCollection).then(resolve, reject);
             break;
           case 'createIndex':
@@ -543,8 +542,6 @@ exports.connect = function(config, intern, callback) {
       mongoString += '?' + extraParams.join('&');
   }
 
-
-  console.log({mongoString});
   db = config.db || new MongoClient(mongoString);
   callback(null, new MongodbDriver(db, intern, mongoString));
 };
