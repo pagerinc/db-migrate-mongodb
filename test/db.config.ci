@@ -15,7 +15,7 @@
   },
   "mongodb": {
     "driver": "mongodb",
-    "host": "localhost",
+    "host": "mongo",
     "database": "admin",
     "user": "admin",
     "password": "admin"
