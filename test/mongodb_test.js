@@ -78,13 +78,9 @@ vows
         },
 
         "containing no tables": function(err, tables) {
-          assert.isNotNull(tables);
-          assert.equal(
-            tables.filter(function(table) {
-              return table.name === "event";
-            }).length,
-            0
-          );
+          assert.isArray(tables);
+          const table = tables.find((t) => t.name === "event");
+          assert.isUndefined(table);
         }
       }
     }

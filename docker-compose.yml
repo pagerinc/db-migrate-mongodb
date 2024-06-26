@@ -11,13 +11,3 @@ services:
     volumes:
       - "mongocfg:/data/configdb"
       - "mongodb:/data/db"
-
-
-## NOTE: this is a requirement for cloud builds
-## If docker-compose is not working for you, simply run
-## 'docker network create cloudbuild'
-##
-networks:
-  default:
-    name: cloudbuild
-    external: true

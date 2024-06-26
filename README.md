@@ -6,8 +6,15 @@
 
 mongodb driver for db-migrate
 
-Breaking Changes:
+## Breaking Changes from v1.5.0:
 - The response payload schema for _getCollectionNames has changed
     - We noticed that the property name `collectionName` is now just `name`
     - Also MongoDB 3.0 deprecates direct access to the system.indexes collection, so tests looking for this collection no longer do
 
+
+## Running Tests
+```shell
+docker-compose up -d
+cp test/db.config.ci test/db.config.json
+npm test
+```
