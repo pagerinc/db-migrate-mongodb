@@ -295,7 +295,7 @@ var MongodbDriver = Base.extend({
             const collectionExists = collections.some(c => c.name === collection);
 
             if (!collectionExists) {
-              db.createCollection(collection);
+              await db.createCollection(collection);
             }
             resolve(true);
             break;
