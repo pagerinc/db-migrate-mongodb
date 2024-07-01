@@ -1,5 +1,5 @@
 steps:
-  - id: compose
+  - id: hackit
     name: "alpine"
     secretEnv: ["NPM_TOKEN"]
     script: |
