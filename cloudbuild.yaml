@@ -1,4 +1,11 @@
 steps:
+  - id: compose
+    name: "alpine"
+    secretEnv: ["NPM_TOKEN"]
+    script: |
+      echo testing
+    waitFor: []
+
   - id: node-buildtime-pull
     name: "us-east1-docker.pkg.dev/$PROJECT_ID/cloudbuilders/node-buildtime:20.9-latest"
     entrypoint: "true"
